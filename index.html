@@ -4,40 +4,46 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>מנהל שער הסקרנות</title>
+
   <style>
     :root {
       --purple: #bcbfff;
       --lime: #e8ff6a;
-      --bg: rgba(8, 10, 28, 0.72);
+      --bg: rgba(8, 10, 28, 0.74);
       --text: #ffffff;
-      --muted: #cfd2ff;
     }
 
     * { box-sizing: border-box; }
 
-    body {
+    html, body {
       margin: 0;
-      min-height: 100vh;
-      font-family: Arial, "Noto Sans Hebrew", sans-serif;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
       background: transparent;
+      font-family: Arial, "Noto Sans Hebrew", sans-serif;
       color: var(--text);
+    }
+
+    body {
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
     }
 
     .app {
-      width: min(100vw, 900px);
-      height: min(100vh, 175px);
-      padding: 12px 26px;
-      border-radius: 30px;
+      width: 100%;
+      height: 100%;
+      padding: 4px 22px;
+      border-radius: 26px;
       background:
-        radial-gradient(circle at 18% 40%, rgba(188,191,255,.22), transparent 35%),
-        radial-gradient(circle at 82% 60%, rgba(232,255,106,.13), transparent 34%),
+        radial-gradient(circle at 18% 50%, rgba(188,191,255,.22), transparent 34%),
+        radial-gradient(circle at 84% 50%, rgba(232,255,106,.16), transparent 34%),
         var(--bg);
-      border: 1px solid rgba(232,255,106,.45);
-      box-shadow: 0 0 22px rgba(188,191,255,.22);
+      border: 1px solid rgba(232,255,106,.5);
+      box-shadow:
+        inset 0 0 18px rgba(188,191,255,.12),
+        0 0 18px rgba(188,191,255,.18);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -46,160 +52,182 @@
 
     .screen {
       display: none;
+      width: 100%;
       height: 100%;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      gap: 10px;
     }
 
     .screen.active { display: flex; }
 
+    #opening, #ending {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-align: center;
+    }
+
     h1 {
       margin: 0;
-      font-size: clamp(26px, 5vw, 40px);
+      font-size: clamp(22px, 3.5vw, 30px);
       color: var(--lime);
     }
 
     .subtitle, .end-text {
-      font-size: clamp(16px, 3vw, 22px);
-      color: var(--muted);
+      font-size: clamp(13px, 2vw, 18px);
+      color: #dfe1ff;
+      font-weight: 700;
     }
 
-    .top-row, .middle-row, .bottom-row {
-      width: 100%;
-      display: grid;
-      align-items: center;
+    #activity {
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 2px;
     }
 
     .top-row {
-      grid-template-columns: 1fr 2fr 1fr;
-      font-size: 16px;
-      color: var(--muted);
+      display: grid;
+      grid-template-columns: 140px 1fr 260px;
+      align-items: center;
+      gap: 12px;
+      min-height: 38px;
     }
 
     .round-label {
       color: var(--lime);
-      font-weight: 800;
+      font-size: 15px;
+      font-weight: 900;
       text-align: right;
-    }
-
-    .phase-label {
-      text-align: left;
+      white-space: nowrap;
     }
 
     .timer {
-      justify-self: end;
-      font-size: clamp(26px, 4vw, 38px);
-      font-weight: 900;
+      justify-self: center;
       color: white;
-      padding: 4px 18px;
+      font-size: clamp(34px, 5vw, 52px);
+      font-weight: 900;
+      line-height: 1;
+      padding: 0 18px;
       border-radius: 999px;
-      border: 1px solid rgba(188,191,255,.45);
-      background: rgba(0,0,0,.18);
+      background: transparent;
+      border: none;
+      white-space: nowrap;
+      text-shadow: 0 0 16px rgba(255,255,255,.28);
     }
 
     .question {
-      text-align: center;
-      font-size: clamp(25px, 4.4vw, 38px);
+      text-align: left;
+      font-size: clamp(15px, 2vw, 22px);
       font-weight: 900;
-      line-height: 1.1;
+      line-height: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: white;
     }
 
-    .middle-row {
-      grid-template-columns: 120px 1fr 120px;
-      gap: 16px;
+    .line-row {
+      display: grid;
+      grid-template-columns: 105px 1fr 105px;
+      align-items: center;
+      gap: 12px;
+      min-height: 28px;
     }
 
     .endpoint {
-      font-size: clamp(22px, 4vw, 34px);
+      font-size: clamp(18px, 2.6vw, 26px);
       font-weight: 900;
       white-space: nowrap;
     }
 
-    .left { color: var(--purple); text-align: right; }
-    .right { color: var(--lime); text-align: left; }
+    .right {
+      color: var(--lime);
+      text-align: left;
+    }
+
+    .left {
+      color: var(--purple);
+      text-align: right;
+    }
 
     .bar {
-      height: 10px;
+      height: 8px;
       border-radius: 999px;
       background: linear-gradient(90deg, var(--purple), var(--lime));
-      box-shadow: 0 0 14px rgba(232,255,106,.35);
+      box-shadow: 0 0 12px rgba(232,255,106,.34);
       position: relative;
     }
 
     .bar::after {
       content: "•••";
       position: absolute;
-      inset: -12px 0 0 0;
-      color: rgba(255,255,255,.7);
-      font-size: 22px;
-      letter-spacing: 5px;
+      top: -12px;
+      left: 0;
+      right: 0;
       text-align: center;
+      color: rgba(255,255,255,.72);
+      font-size: 16px;
+      letter-spacing: 6px;
     }
 
     .bottom-row {
-      grid-template-columns: 150px 1fr 150px;
-      gap: 12px;
+      display: grid;
+      grid-template-columns: 96px 1fr 96px;
+      align-items: center;
+      gap: 8px;
+      min-height: 32px;
+    }
+
+    .instruction-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-width: 0;
     }
 
     .instruction {
-      text-align: center;
-      font-size: clamp(20px, 3.7vw, 32px);
       color: var(--lime);
+      font-size: clamp(17px, 2.7vw, 24px);
       font-weight: 900;
-      text-shadow: 0 0 14px rgba(232,255,106,.38);
-    }
-
-    .controls {
-      display: contents;
+      line-height: 1;
+      white-space: nowrap;
+      text-shadow: 0 0 13px rgba(232,255,106,.34);
     }
 
     button {
       border: none;
       border-radius: 999px;
-      padding: 8px 14px;
-      font-size: 15px;
+      padding: 5px 12px;
+      font-size: 12px;
       font-weight: 900;
       cursor: pointer;
+      white-space: nowrap;
+      line-height: 1;
     }
 
-    button.main {
+    .main {
       background: var(--lime);
       color: #101221;
-      box-shadow: 0 0 14px rgba(232,255,106,.28);
-      max-width: 210px;
-      justify-self: center;
+      min-width: 95px;
+      box-shadow: 0 0 10px rgba(232,255,106,.24);
     }
 
-    button.secondary {
-      background: rgba(188,191,255,.12);
+    .secondary {
+      background: rgba(188,191,255,.13);
       color: white;
-      border: 1px solid rgba(188,191,255,.5);
-      min-width: 115px;
+      border: 1px solid rgba(188,191,255,.48);
+      min-width: 75px;
     }
 
-    .pause-wrap { justify-self: left; }
     .reset-wrap { justify-self: right; }
-
-    .pulse {
-      animation: pulse .75s infinite alternate;
-      color: var(--lime);
-    }
-
-    @keyframes pulse {
-      from { transform: scale(1); }
-      to { transform: scale(1.06); text-shadow: 0 0 22px rgba(232,255,106,.8); }
-    }
+    .pause-wrap { justify-self: left; }
 
     .progress-wrap {
       width: 100%;
-      height: 4px;
+      height: 3px;
       background: rgba(255,255,255,.12);
       border-radius: 999px;
       overflow: hidden;
-      margin-top: 2px;
     }
 
     .progress {
@@ -207,6 +235,19 @@
       width: 0%;
       background: linear-gradient(90deg, var(--purple), var(--lime));
       transition: width .35s linear;
+    }
+
+    .pulse {
+      animation: pulse .7s infinite alternate;
+      color: var(--lime);
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to {
+        transform: scale(1.06);
+        text-shadow: 0 0 18px rgba(232,255,106,.8);
+      }
     }
   </style>
 </head>
@@ -222,31 +263,29 @@
 
     <section id="activity" class="screen">
       <div class="top-row">
-        <div class="round-label" id="roundLabel"></div>
-        <div class="phase-label" id="phaseLabel"></div>
-        <div class="timer" id="timer"></div>
+        <div id="roundLabel" class="round-label"></div>
+        <div id="timer" class="timer"></div>
+        <div id="question" class="question"></div>
       </div>
 
-      <div class="question" id="question"></div>
-
-      <div class="middle-row">
+      <div class="line-row">
         <div id="rightLabel" class="endpoint right"></div>
         <div class="bar"></div>
         <div id="leftLabel" class="endpoint left"></div>
       </div>
 
       <div class="bottom-row">
-        <div class="pause-wrap">
-          <button class="secondary" onclick="togglePause()" id="pauseBtn">השהה</button>
+        <div class="reset-wrap">
+          <button class="secondary" onclick="resetActivity()">איפוס</button>
         </div>
 
-        <div>
+        <div class="instruction-wrap">
           <div id="instruction" class="instruction"></div>
           <button class="main" onclick="nextStep()" id="nextBtn">הבא</button>
         </div>
 
-        <div class="reset-wrap">
-          <button class="secondary" onclick="resetActivity()">איפוס</button>
+        <div class="pause-wrap">
+          <button class="secondary" onclick="togglePause()" id="pauseBtn">השהה</button>
         </div>
       </div>
 
@@ -273,12 +312,10 @@
       phases: [
         {
           duration: 120,
-          label: "שלב א׳",
           instruction: "מצאו את המקום שלכם על הקו"
         },
         {
           duration: 25,
-          label: "שלב ב׳",
           instruction: "דברו רגע עם מי שעומד לידכם"
         }
       ],
@@ -353,7 +390,7 @@
         }
 
         gain.gain.setValueAtTime(0.001, now);
-        gain.gain.exponentialRampToValueAtTime(0.2, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.18, now + 0.02);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
 
         osc.connect(gain);
@@ -382,7 +419,6 @@
       waitingForNextRound = false;
 
       $("roundLabel").textContent = `סבב ${roundIndex + 1} מתוך ${CONTENT.rounds.length}`;
-      $("phaseLabel").textContent = phase.label;
       $("question").textContent = round.question;
       $("leftLabel").textContent = round.left;
       $("rightLabel").textContent = round.right;
@@ -400,10 +436,7 @@
         if (!paused && !waitingForNextRound) {
           timeLeft--;
           updateTimer();
-
-          if (timeLeft <= 0) {
-            handlePhaseEnd();
-          }
+          if (timeLeft <= 0) handlePhaseEnd();
         }
       }, 1000);
     }
@@ -428,7 +461,7 @@
         $("instruction").textContent = "סיימתם את כל הסבבים";
         $("nextBtn").textContent = "לסיום";
       } else {
-        $("instruction").textContent = "לחצו כדי לעבור לסבב הבא";
+        $("instruction").textContent = "מוכנים? עברו לסבב הבא";
         $("nextBtn").textContent = "הסבב הבא";
       }
     }
@@ -489,8 +522,7 @@
     function updateProgress() {
       const totalSteps = CONTENT.rounds.length * CONTENT.phases.length;
       const currentStep = roundIndex * CONTENT.phases.length + phaseIndex;
-      const percent = (currentStep / totalSteps) * 100;
-      $("progress").style.width = `${percent}%`;
+      $("progress").style.width = `${(currentStep / totalSteps) * 100}%`;
     }
 
     initText();
